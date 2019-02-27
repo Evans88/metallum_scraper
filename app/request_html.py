@@ -4,8 +4,9 @@ from contextlib import closing
 import logging
 
 def get_raw_html(url):
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'}
     try:
-        with closing(get(url)) as resp:
+        with closing(get(url, timeout=10, headers=headers)) as resp:
             content_type = resp.headers.get("Content-Type")
             status_code = resp.status_code
 
@@ -17,5 +18,5 @@ def get_raw_html(url):
         logging.warning(f"Error during request to {url} : {e}")
 
 
-print(get_raw_html("https://docs.python.org/2/library/contextlib.html"))
+#print(get_raw_html('https://www.metal-archives.com/bands/Mgla/44722'))
 
