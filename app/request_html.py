@@ -17,5 +17,5 @@ def get_raw_html(url):
         logging.warning(f"Error during request to {url} : {e}")
 
 
-get_raw_html("https://docs.python.org/2/library/contextlib.html")
+print(get_raw_html("https://docs.python.org/2/library/contextlib.html"))
 
