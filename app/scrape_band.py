@@ -2,7 +2,6 @@ from app import request_html
 from bs4 import BeautifulSoup
 import re
 
-#  url = 'https://www.metal-archives.com/bands/Mg%C5%82a/44722'
 
 def scrape_band(url):
 

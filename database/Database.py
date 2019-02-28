@@ -3,7 +3,7 @@ import datetime
 import logging
 
 
-class Database:
+class Database():
 
     def __init__(self):
         cxn_string = 'DRIVER={SQL Server Native Client 11.0};SERVER=(localdb)\\MSSQLLocalDB;DATABASE=Metallum;Trusted_Connection=yes'
@@ -11,6 +11,7 @@ class Database:
         self.cursor = cxn.cursor()
 
     def insert_into_band(self, m, auto_commit=False):
+        print(m)
         try:
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self.cursor.execute(
@@ -32,7 +33,8 @@ class Database:
             if auto_commit:
                 self.commit()
         except pyodbc.IntegrityError:
-            logging.error(f'Table: band - Primary key constraint violation: '.format(m.get("id"), m.get('band_name')))
+            logging.error(f'Table: band - Primary key constraint violation: {m.get("id")},{m.get("band name")}')
+
 
     def commit(self):
         self.cursor.commit()
