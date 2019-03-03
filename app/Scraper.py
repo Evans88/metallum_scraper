@@ -27,27 +27,18 @@ def scrape_album_page(url):
     album_id = url[url.rindex("/") + 1:]
     album_name = soup.find("h1", {"class": "album_name"}).text
 
-    stats = [album_id, album_name]
+    st = [album_id, album_name]
     for a in soup.findAll("dl", {"class": ["float_left", "float_right"]}):
         for b in a.findAll("dd"):
-            stats.append(b.text)
+            st.append(b.text)
 
+    album_stats = [s.strip() for s in st]
+    reviews = album_stats[-1]
+    review_count = 0 if reviews == "None yet" else int(reviews[:reviews.index(" ")])
+    avg_score = None if reviews == "None yet" else int(reviews[reviews.index(". ") + 2: reviews.index("%")])
 
-    stats = [s.strip() for s in stats]
-    review_count = 0 if stats[-1] == "None yet" else int(stats[-1][0])
-    print(review_count)
+    album_stats.extend([review_count,avg_score])
+    del album_stats[7]
 
+    return album_stats
 
-
-
-
-
-
-
-
-
-
-
-url = 'https://www.metal-archives.com/albums/Mg%C5%82a/Exercises_in_Futility/527726'
-
-scrape_album_page(url)
