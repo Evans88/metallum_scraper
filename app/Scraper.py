@@ -24,7 +24,25 @@ def scrape_band_page(url):
     return ret
 
 
+def scrape_album_page(url):
+    html = request.get_raw(url)
+    soup = BeautifulSoup(html, "html.parser")
 
+    album_id = url[url.rindex("/") + 1:]
+    album_name = soup.find("h1", {"class": "album_name"}).text
 
+    st = [album_id, album_name]
+    for a in soup.findAll("dl", {"class": ["float_left", "float_right"]}):
+        for b in a.findAll("dd"):
+            st.append(b.text)
 
+    album_stats = [s.strip() for s in st]
+    reviews = album_stats[-1]
+    review_count = 0 if reviews == "None yet" else int(reviews[:reviews.index(" ")])
+    avg_score = None if reviews == "None yet" else int(reviews[reviews.index(". ") + 2: reviews.index("%")])
+
+    album_stats.extend([review_count,avg_score])
+    del album_stats[7]
+
+    return album_stats
 
