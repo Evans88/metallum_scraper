@@ -10,7 +10,7 @@ __pycache__/
 .idea/**/dictionaries
 .idea/**/shelf
 
-
+log/*
 # C extensions
 *.so
 
