@@ -14,8 +14,7 @@ class Scraper:
         driver_path = 'C:\\Users\\evansdar\\Code\\Python\\metallum_scraper\\app\\driver\\chromedriver.exe',
         self.driver = webdriver.Chrome(driver_path, chrome_options=driver_opts)
 
-    def clear_driver(self):
-        self.driver.get
+  
 
     def scrape_band_page(self, url):
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
