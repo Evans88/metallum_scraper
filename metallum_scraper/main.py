@@ -34,3 +34,4 @@ b = sb.scrape_album_page('https://www.metal-archives.com/albums/Mg%C5%82a/Exerci
 db.insert_into('album', b, auto_commit=True)
 
 """
+#fdd
