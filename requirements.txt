@@ -1,0 +1,7 @@
+
+
+requests >= 2.18.*
+beautifulsoup4
+selenium
+sqlalchemy
+pyodbc
