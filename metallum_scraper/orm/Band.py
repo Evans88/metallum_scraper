@@ -3,6 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from metallum_scraper import request
 from bs4 import BeautifulSoup
 import re
+import json
+from urllib import parse
 import datetime
 
 Base = declarative_base()
@@ -54,10 +56,8 @@ class Band(Base):
         self.datetime_added = now
         self.datetime_modified = now
 
-        albums = []
-
-
-
     def __repr__(self):
-        return f"<Band({self.data})>"
+        return "Band (band_id={}, name={})>".format(self.band_id,self.name)
 
+if __name__ == "__main__":
+    b = Band('https://www.metal-archives.com/bands/Mg%C5%82a/44722')

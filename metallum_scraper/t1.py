@@ -31,10 +31,12 @@ def iterate_songs_and_print(songs, args):
     "(lyrics not available)" then break the loop and print them out.\
     Otherwise the last song of the list will be printed.'''
     for song in songs:
+        print(song)
         band_name = band_name_re.search(song[0]).group("name")
         song_title = song[3]
         song_id = lyric_id_re.search(song[4]).group("id")
         lyrics = get_lyrics_by_song_id(song_id)
+
         if lyrics != lyrics_not_available:
             break
 
@@ -64,4 +66,7 @@ def main():
 
 
 if __name__ == '__main__':
-    h = 'https://www.eventbrite.com/e/wids-skills-sessions-registration-tickets-56808840772#tickets'
+    t = urlopen('https://www.metal-archives.com/albums/Mg%C5%82a/Exercises_in_Futility/527726')
+    for i in t.readlines():
+        print(i)
+
