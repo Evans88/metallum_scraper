@@ -1,11 +1,9 @@
 import datetime
 from bs4 import BeautifulSoup
 from metallum_scraper import request
+import re, time, json
+from urllib import parse
 from metallum_scraper.database import Database as db
-import re
-import time
-import json
-
 
 def get_band_hrefs():
     base_url = 'https://www.metal-archives.com/search/ajax-advanced/searching/bands?iDisplayStart='
@@ -21,42 +19,46 @@ def get_band_hrefs():
 
         hrefs.extend([b[9:b.index("\">")] for b in raw])
 
-        print(len(hrefs))
-
         time.sleep(1)
     return hrefs
 
 
-def get_band_details(url):
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    categories = ['band_id', 'Name', 'Country of Origin', 'Location', 'Status', 'Year Formed', 'Genre', 'Lyrical Themes',
-                  'Current Label', 'Years Active', 'datetime_added', 'datetime_modified']
-    band_page = request.get_raw(url)
 
-    soup = BeautifulSoup(band_page, 'html.parser')
-
-    band_id = re.sub("\n", "", url[url.rindex("/") + 1:])
-    band_name = soup.find("h1", {"class": "band_name"}).text
-    ret_band = [band_id, band_name]
-
-    div_band_stats = soup.find("div", {"id": "band_stats"})
-
-    stats_values = [" ".join(a.text.strip().split()) for a in div_band_stats.find_all("dd")]
-    ret_band.extend(stats_values)
-    ret_band.extend([now, now])  # create date, update date
-
-    r_dict = dict(zip(categories, ret_band))
-
-    return r_dict
+def get_album_hrefs(band_name):
+    base_album_url = "https://www.metal-archives.com/search/ajax-advanced/searching/albums?"
+    params = {'exactBandMatch': '1', "bandName": band_name}
+    albums_page = request.get_raw(base_album_url + parse.urlencode(params))
+    _json = json.loads(albums_page)
+    raw = [a for a in _json['aaData']]
 
 
-with open("hrefs.txt", "r") as f:
-    lines = f.readlines()
-    ll = []
-    for t in range(10):
-        ll.append(get_band_details(lines[t]))
-print(ll)
-db1 = db.Database()
-db1.create_all_tables()
-db1.insert_into('band',ll)
+    ret = list()
+    for i in raw:
+        b_href = i[0][46:]
+        a_href_raw = i[1][9:]
+
+        a_href = a_href_raw[: a_href_raw.index('"')]
+        print(a_href)
+        band_id = b_href[b_href.index("/") + 1: b_href.index('"')]
+
+        #ret.append(scrape_album_page(band_id, a_href))
+    print(ret)
+    return ret
+
+
+
+
+
+
+if __name__ == "__main__":
+
+    get_album_hrefs("Batushka")
+
+    # with open("hrefs.txt", "r") as f:
+    #     lines = f.readlines()
+    #     ll = []
+    #     for t in range(1):
+    #         ll.append(get_band_details(lines[t]))
+
+
 

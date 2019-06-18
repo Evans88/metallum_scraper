@@ -65,4 +65,3 @@ def main():
 
 if __name__ == '__main__':
     h = 'https://www.eventbrite.com/e/wids-skills-sessions-registration-tickets-56808840772#tickets'
-    print(2348527 & 23485S)
