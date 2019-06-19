@@ -15,12 +15,25 @@ with open('hrefs.txt') as f:
     files = f.readlines()
 
 s = Session()
-for i in range(10):
-    band = Band(files[i])
-    albums = Albums(band.band_id, band.name)
-    for i in albums.albums:
-        s.add(i)
-        s.commit()
 
-    #s.add(band)
-    #s.commit()
+# a = Albums('44722','Mgła')
+# songs = a.albums[0].songs
+#
+# for i in songs:
+#
+#     s.add(i)
+#     s.commit()
+
+
+for i in range(150):
+    band = Band(files[i])
+
+    albums = Albums(band.band_id, band.name).albums
+
+    s.add(band)
+    for album in albums:
+        s.add(album)
+        for song in album.songs:
+            s.add(song)
+
+    s.commit()

@@ -5,17 +5,15 @@ from sqlalchemy import Table, Column, NVARCHAR, Integer, Float, DateTime
 class Database:
 
     def __init__(self):
-        #engine = create_engine("sqlite://")
+        # engine = create_engine("sqlite://")
         db_url = "mssql+pyodbc://(localdb)\\MSSQLLocalDB/Metallum?driver=SQL+Server+Native+Client+11.0"
 
         self.engine = create_engine(db_url)
         self.metadata = MetaData()
 
-
     def create_all_tables(self):
-
         band = Table('band', self.metadata
-                     , Column('band_id', NVARCHAR(50),primary_key=True)
+                     , Column('band_id', NVARCHAR(50), primary_key=True)
                      , Column('Name', NVARCHAR(150))
                      , Column('Country of Origin', NVARCHAR(75))
                      , Column('Location', NVARCHAR(150))
@@ -45,8 +43,15 @@ class Database:
                       , Column('datetime_modified', DateTime)
                       )
 
+        song = Table('song', self.metadata
+                     , Column('song_id', NVARCHAR(50), primary_key=True)
+                     , Column('name', NVARCHAR(250))
+                     , Column('album_id', NVARCHAR(50))
+                     , Column('length', NVARCHAR(10))
+                     )
+
         self.metadata.create_all(self.engine)
 
-
-
-
+if __name__ == "__main__":
+    d = Database()
+    d.create_all_tables()

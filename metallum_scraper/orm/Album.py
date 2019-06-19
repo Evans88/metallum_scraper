@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import json
 from urllib import parse
 import datetime
+from metallum_scraper.orm.Song import Song
 
 Base = declarative_base()
 
@@ -44,7 +45,9 @@ class Albums():
 class Album(Base):
 
     def __init__(self, band_id, url):
+        self.songs = []
         self.scrape_album_page(band_id,url)
+
 
     __tablename__ = 'album'
     album_id =          Column('album_id', NVARCHAR(50), primary_key=True)
@@ -60,23 +63,12 @@ class Album(Base):
     datetime_added =    Column('datetime_added', DateTime)
     datetime_modified = Column('datetime_modified', DateTime)
 
-
-    def scrape_album_page(self,band_id,url):
+    def scrape_album_page(self, band_id,url):
 
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         soup = BeautifulSoup(request.get_raw(url), "html.parser")
 
-
-        for i in soup.findAll("table", {"class": "display table_lyrics"}):
-            d= [p.text.strip() for p in i.findAll("tr")]
-            print(d)
-
-
-
-
-
-        print("_"*50)
-
+        #get album information
         labels, values = [], []
         for desc in soup.findAll("dl", {"class": ["float_left", "float_right"]}):
             labels += [c.text for c in desc.findAll("dt")]
@@ -98,14 +90,33 @@ class Album(Base):
         self.datetime_added = now
         self.datetime_modified = now
 
-    def get_songs(self):
-        pass
+        self.__get_songs(soup)
+
+    def __get_songs(self, soups):
+        for i in soups.findAll("table", {"class": "display table_lyrics"}):
+            song_ids, titles, runtime = [], [], []
+            for p in i.findAll("tr"):
+                titles.append(''.join([mm.text.strip() for mm in p.findAll("td", {"class": "wrapWords"})]))
+                runtime.append(''.join(map(str,[mm for mm in p.findAll("td", {"align": "right"})])))
+                sids = ''.join(map(str,[a for a in p.findAll("a")]))
+                if "name=" in sids:
+                    song_ids.append(sids[sids.index("name=") + 6: sids.index(">") - 1])
+
+            runtime = list(filter(lambda x: len(x) > 0, runtime))
+            runtime = [i[i.index(">") + 1: -5] for i in runtime]
+            titles = list(filter(lambda x: len(x) > 0, titles))
+
+            songs = list(zip(song_ids, titles, runtime))
+            for i in songs:
+                _s = Song(i[0], i[1], self.album_id, i[2])
+                self.songs.append(_s)
 
 
     def __repr__(self):
         return "Album (band_id={}, album_id={}, name={})".format(self.band_id, self.album_id, self.name)
 
 
-
 if __name__ == "__main__":
-    a = Albums('44722','Mgła')
+    pass
+    #ba = Albums('44722','Mgła')
+    #a = Albums('97694','Healthy Drain')
