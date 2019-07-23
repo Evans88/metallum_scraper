@@ -1,11 +1,11 @@
 from sqlalchemy import create_engine, MetaData, select
 from sqlalchemy import Table, Column, NVARCHAR, Integer, Float, DateTime
 
-
+#for testing purposes
 class Database:
 
     def __init__(self):
-        # engine = create_engine("sqlite://")
+        #db_url = "sqlite://"
         db_url = "mssql+pyodbc://(localdb)\\MSSQLLocalDB/Metallum?driver=SQL+Server+Native+Client+11.0"
 
         self.engine = create_engine(db_url)

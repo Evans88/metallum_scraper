@@ -1,13 +1,13 @@
 from sqlalchemy import Column, NVARCHAR, DateTime
-from sqlalchemy.ext.declarative import declarative_base
 from metallum_scraper import request
 from bs4 import BeautifulSoup
+from metallum_scraper.orm.Base import base
 import re
-import json
-from urllib import parse
 import datetime
 
-Base = declarative_base()
+
+
+Base = base
 
 
 class Band(Base):
@@ -32,7 +32,7 @@ class Band(Base):
     datetime_modified = Column('datetime_modified', DateTime)
 
     def __get_band_details(self):
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.datetime.now()
 
         band_page = request.get_raw(self.url)
         soup = BeautifulSoup(band_page, 'html.parser')
@@ -57,7 +57,8 @@ class Band(Base):
         self.datetime_modified = now
 
     def __repr__(self):
-        return "Band (band_id={}, name={})>".format(self.band_id,self.name)
+        return "Band (band_id={}, name={})>".format(self.band_id, self.name)
+
 
 if __name__ == "__main__":
     b = Band('https://www.metal-archives.com/bands/Mg%C5%82a/44722')

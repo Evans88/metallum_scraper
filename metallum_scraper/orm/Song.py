@@ -1,8 +1,8 @@
 
 from sqlalchemy import Column, NVARCHAR
-from sqlalchemy.ext.declarative import declarative_base
+from metallum_scraper.orm.Base import base
 
-Base = declarative_base()
+Base = base
 
 class Song(Base):
 

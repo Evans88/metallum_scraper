@@ -1,5 +1,5 @@
 from sqlalchemy import Column, NVARCHAR, DateTime, Integer, Float
-from sqlalchemy.ext.declarative import declarative_base
+
 from metallum_scraper import request
 from bs4 import BeautifulSoup
 import json
@@ -7,7 +7,9 @@ from urllib import parse
 import datetime
 from metallum_scraper.orm.Song import Song
 
-Base = declarative_base()
+from metallum_scraper.orm.Base import base
+
+Base = base
 
 
 class Albums():
@@ -20,10 +22,19 @@ class Albums():
 
     def __get_album_hrefs(self):
         base_album_url = "https://www.metal-archives.com/search/ajax-advanced/searching/albums?"
-        params = {'exactBandMatch': '1', "bandName": self.band_name}
+        params = {'exactBandMatch': 1, 'bandName': self.band_name}
         albums_page = request.get_raw(base_album_url + parse.urlencode(params))
+        _json = json.loads(albums_page)
+
+        # sometimes exact match doesnt work
+        if _json['iTotalRecords'] == 0:
+            params = {'bandName': self.band_name}
+
+        albums_page = request.get_raw(base_album_url + parse.urlencode(params))
+        print(base_album_url + parse.urlencode(params))
 
         _json = json.loads(albums_page)
+
         raw = [x for x in _json['aaData']]
         ret = list()
         for i in raw:
@@ -46,7 +57,7 @@ class Album(Base):
 
     def __init__(self, band_id, url):
         self.songs = []
-        self.scrape_album_page(band_id,url)
+        self.scrape_album_page(band_id, url)
 
 
     __tablename__ = 'album'
@@ -65,7 +76,8 @@ class Album(Base):
 
     def scrape_album_page(self, band_id,url):
 
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.datetime.now()
+
         soup = BeautifulSoup(request.get_raw(url), "html.parser")
 
         #get album information

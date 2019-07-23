@@ -1,13 +1,20 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+
+from metallum_scraper.orm.Base import base
 from metallum_scraper.orm.Band import Band
 from metallum_scraper.orm.Album import Albums
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
 
-engine = create_engine('mssql+pyodbc://(localdb)\\MSSQLLocalDB/Metallum?driver=SQL+Server+Native+Client+11.0')
+
+db_url = "sqlite://"
+#db_url = "mssql+pyodbc://(localdb)\\MSSQLLocalDB/Metallum?driver=SQL+Server+Native+Client+11.0"
+
+engine = create_engine(db_url)
+Base = base
+
 Session = sessionmaker(bind=engine)
+
 Base.metadata.create_all(engine)
 
 
@@ -16,17 +23,10 @@ with open('hrefs.txt') as f:
 
 s = Session()
 
-# a = Albums('44722','Mgła')
-# songs = a.albums[0].songs
-#
-# for i in songs:
-#
-#     s.add(i)
-#     s.commit()
+for i in range(10):
 
-
-for i in range(150):
     band = Band(files[i])
+    print(i, band.name)
 
     albums = Albums(band.band_id, band.name).albums
 
@@ -37,3 +37,4 @@ for i in range(150):
             s.add(song)
 
     s.commit()
+
